@@ -41,7 +41,13 @@ def main():
     current_following_number = instaboting.auto.get_current_following_number()
     while current_following_number < target_nof_following:
         logger.info('Current following number: {}'.format(current_following_number))
-        main_loop()
+        try:
+            main_loop()
+        except instaboting.auto.UnestableScrapperException as e:
+            if e.args[1] == instaboting.constants.ERROR_TIMEOUT_SUGGESTED:
+                continue
+            else:
+                raise e
         current_following_number = instaboting.auto.get_current_following_number()
     logger.info('Target following number ({}) reached: {}'.format(target_nof_following, current_following_number))
 

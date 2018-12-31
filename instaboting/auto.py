@@ -22,7 +22,7 @@ def get_suggested_people():
             break
         except TimeoutException as e:
             if x+1 == retries:
-                raise e
+                raise UnestableScrapperException('Suggested page failed to load', constants.ERROR_TIMEOUT_SUGGESTED)
             logger.warning('Page failed to load, reloading ({}/{})'.format(x+1, retries))
             time.sleep(2*x)
             pass
