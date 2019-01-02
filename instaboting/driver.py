@@ -3,9 +3,10 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import os
 
 
-class Singleton:
+class InstaDriver:
     class __Singleton:
         def __init__(self, arg):
             self.driver = arg
@@ -15,21 +16,25 @@ class Singleton:
 
     instance = None
 
-    def __init__(self, arg):
-        if not Singleton.instance:
-            Singleton.instance = Singleton.__Singleton(arg())
+    def __init__(self, remote=False):
+        if not InstaDriver.instance:
+            if remote:
+                options = webdriver.ChromeOptions()
+                options.add_argument('--user-data-dir=/tmp/chrome')
+                driver = webdriver.Remote(
+                    'http://instabot_selenium:4444/wd/hub',
+                    options.to_capabilities())
+            else:
+                driver = webdriver.Chrome()
+            InstaDriver.instance = InstaDriver.__Singleton(driver)
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
 
-class InstaDriver(Singleton):
-    def __init__(self):
-        super().__init__(webdriver.Chrome)
-
-
 def get_driver():
-    return InstaDriver().instance.driver
+    remote = os.environ.get('REMOTE_SELENIUM') in [True, 'true', 'True', '1']
+    return InstaDriver(remote).instance.driver
 
 
 def wait_for_element(selector, timeout=5, selector_type=By.CSS_SELECTOR, from_element=get_driver()):

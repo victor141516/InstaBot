@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import json
 from loguru import logger
+import os
+from redpie import Redpie
 
 
 class NoCredentialsException(Exception):
@@ -51,28 +53,18 @@ def get_plain_credentials(config_file):
     return Credentials(username=username, password=password)
 
 
-def get_people_from_config(config_file):
-    with open(config_file) as f:
-        current_config = json.load(f)
-    return current_config.get('people', {})
-
-
-def add_people_to_config(people, config_file):
-    if people is None:
-        logger.error('Empty people structure')
-        return
-
-    with open(config_file) as f:
-        current_config = json.load(f)
-    with open(config_file, 'w') as f:
-        current_config['people'] = current_config.get('people', {})
-        current_config['people'].update(people)
-        logger.info('Adding people...')
-        logger.info(json.dumps(current_config['people']))
-        json.dump(current_config, f)
-
-
 def get_target_nof_following(config_file=None, default=100):
     with open(config_file) as f:
         current_config = json.load(f)
     return current_config.get('target_following', default)
+
+
+def get_db():
+    use_redis = os.environ.get('USE_REDIS') in [True, 'true', 'True', '1']
+    if use_redis:
+        try:
+            return Redpie(0, 'instabot_redis')
+        except ConnectionError:
+            return {}
+    else:
+        return {}
