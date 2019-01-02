@@ -68,7 +68,12 @@ try:
 except Exception as e:
     logger.critical('{} occurred, printing traceback and exiting'.format(str(type(e))))
     logger.critical(e)
-    logger.debug('HTML:')
-    logger.debug(instaboting.driver.get_driver().page_source)
+    driver = instaboting.driver.get_driver()
+    logger.debug('HTML (saving to debug/page.html/png):')
+    html = driver.page_source
+    logger.debug(html)
+    with open('debug/page.html', 'w') as f:
+        f.write(html)
+    driver.save_screenshot('debug/page.png')
 finally:
     exit_handler()
