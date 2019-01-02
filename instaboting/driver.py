@@ -51,3 +51,7 @@ def find_elements_by_text(text, from_element=get_driver()):
         raise NoSuchElementException('No elements containing text: {}'.format(text))
     else:
         return els
+
+
+def scroll_to_bottom():
+    return get_driver().execute_script("window.scrollTo(0, document.body.scrollHeight);")

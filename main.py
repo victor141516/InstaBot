@@ -18,11 +18,16 @@ def exit_handler(sig=None, frame=None):
 signal.signal(signal.SIGINT, exit_handler)
 
 
-def main_loop():
+def main_loop(nof_scrolls=0):
     global PEOPLE
-    suggested_people = instaboting.auto.get_suggested_people()
+    suggested_people = instaboting.auto.get_suggested_people(nof_scrolls=nof_scrolls)
+
+    already_seen_people = 0
     for name in suggested_people:
-        PEOPLE[name] = {'status': instaboting.constants.NOT_CHECKED}
+        if name in PEOPLE:
+            already_seen_people += 1
+        else:
+            PEOPLE[name] = {'status': instaboting.constants.NOT_CHECKED}
 
     for name in PEOPLE:
         this_person = PEOPLE[name]
@@ -31,6 +36,8 @@ def main_loop():
         if PEOPLE[name]['status'] == instaboting.constants.SHOULD_FOLLOW:
             PEOPLE[name]['status'] = instaboting.auto.follow_person_by_name(name)
 
+    return already_seen_people / len(suggested_people)
+
 
 def main():
     credentials = get_plain_credentials(CONFIG_FILE)
@@ -38,10 +45,15 @@ def main():
 
     target_nof_following = get_target_nof_following(CONFIG_FILE)
     current_following_number = instaboting.auto.get_current_following_number()
+    next_nof_scrolls = 0
     while current_following_number < target_nof_following:
         logger.info('Current following number: {}'.format(current_following_number))
         try:
-            main_loop()
+            current_seen_ratio = main_loop(next_nof_scrolls)
+            logger.info('Current seen ratio: {}'.format(current_seen_ratio))
+            if current_seen_ratio > 0.5:
+                next_nof_scrolls += 1
+                logger.info('Increasing nomber of scrolls: {} '.format(next_nof_scrolls))
         except instaboting.auto.UnestableScrapperException as e:
             if e.args[1] == instaboting.constants.ERROR_TIMEOUT_SUGGESTED:
                 continue

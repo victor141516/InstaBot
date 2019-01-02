@@ -1,5 +1,5 @@
 from instaboting import constants
-from instaboting.driver import get_driver, wait_for_element
+from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom
 from loguru import logger
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -10,11 +10,13 @@ class UnestableScrapperException(Exception):
     pass
 
 
-def get_suggested_people():
+def get_suggested_people(nof_scrolls=0):
     retries = 10
     driver = get_driver()
     driver.get('https://www.instagram.com/explore/')
     logger.info('Exploring...')
+    for x in range(0, nof_scrolls):
+        scroll_to_bottom()
 
     for x in range(0, retries):
         try:
