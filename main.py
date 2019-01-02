@@ -68,5 +68,7 @@ try:
 except Exception as e:
     logger.critical('{} occurred, printing traceback and exiting'.format(str(type(e))))
     logger.critical(e)
+    logger.debug('HTML:')
+    logger.debug(instaboting.driver.get_driver().page_source)
 finally:
     exit_handler()
