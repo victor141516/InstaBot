@@ -1,9 +1,10 @@
-from configuration import get_plain_credentials, get_target_nof_following, get_db
+from configuration import get_plain_credentials, get_target_nof_following, get_db, get_slowmo
 import instaboting
 import json
 from loguru import logger
 import signal
 import sys
+import time
 
 CONFIG_FILE = 'config.json'
 global PEOPLE
@@ -60,6 +61,7 @@ def main():
             else:
                 raise e
         current_following_number = instaboting.auto.get_current_following_number()
+        time.sleep(get_slowmo())
     logger.info('Target following number ({}) reached: {}'.format(target_nof_following, current_following_number))
 
 

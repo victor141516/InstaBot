@@ -68,3 +68,7 @@ def get_db():
             return {}
     else:
         return {}
+
+
+def get_slowmo():
+    return int(os.environ.get('SLOW_TIME', 0))
