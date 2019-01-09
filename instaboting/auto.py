@@ -57,8 +57,8 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
         h2s = driver.find_elements_by_css_selector('h2')
         if len(h2s) == 1 and 'Sorry, this page isn\'t available.' in h2s[0].text:
             if _recursion < 3:
-                return check_person(name, all_people, min_following, max_following, min_followers, max_followers, min_ratio, max_ratio, _recursion=_recursion+1)
                 logger.debug('Error trying to check person, retry')
+                return check_person(name, all_people, min_following, max_following, min_followers, max_followers, min_ratio, max_ratio, _recursion=_recursion+1)
             else:
                 logger.warning('Multiple error trying to check person, skipping')
                 return {'status': constants.SHOULD_NOT_FOLLOW}
