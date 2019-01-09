@@ -72,3 +72,7 @@ def get_db():
 
 def get_slowmo():
     return int(os.environ.get('SLOW_TIME', 0))
+
+
+def get_show_html_if_error():
+    return os.environ.get('SHOW_HTML_IF_ERROR') in [True, 'true', 'True', '1']

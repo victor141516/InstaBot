@@ -1,4 +1,4 @@
-from configuration import get_plain_credentials, get_target_nof_following, get_db, get_slowmo
+from configuration import get_plain_credentials, get_target_nof_following, get_db, get_slowmo, get_show_html_if_error
 import instaboting
 import json
 from loguru import logger
@@ -72,10 +72,11 @@ except Exception as e:
     logger.critical(e)
     driver = instaboting.driver.get_driver()
     logger.debug('HTML (saving to debug/page.html/png):')
+    driver.save_screenshot('debug/page.png')
     html = driver.page_source
-    logger.debug(html)
     with open('debug/page.html', 'w') as f:
         f.write(html)
-    driver.save_screenshot('debug/page.png')
+    if get_show_html_if_error():
+        logger.debug(html)
 finally:
     exit_handler()
