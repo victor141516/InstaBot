@@ -5,6 +5,7 @@ from loguru import logger
 import signal
 import sys
 import time
+import traceback
 
 CONFIG_FILE = 'config.json'
 global PEOPLE
@@ -69,7 +70,7 @@ try:
     main()
 except Exception as e:
     logger.critical('{} occurred, printing traceback and exiting'.format(str(type(e))))
-    logger.critical(e)
+    logger.critical(traceback.format_exc())
     driver = instaboting.driver.get_driver()
     logger.debug('HTML (saving to debug/page.html/png):')
     driver.save_screenshot('debug/page.png')
