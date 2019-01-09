@@ -38,7 +38,7 @@ def main_loop(nof_scrolls=0):
         this_person.update(instaboting.auto.check_person(name, PEOPLE))
         PEOPLE[name] = this_person
         if PEOPLE[name]['status'] == instaboting.constants.SHOULD_FOLLOW:
-            PEOPLE[name]['status'] = instaboting.auto.follow_person_by_name(name)
+            PEOPLE[name].update({'status': instaboting.auto.follow_person_by_name(name)})
 
     return already_seen_people / len(suggested_people)
 
