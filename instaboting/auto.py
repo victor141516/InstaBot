@@ -58,7 +58,7 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
         logger.debug('Traceback:')
         logger.debug(traceback.format_exc())
         logger.debug('HTML of that section:')
-        logger.debug(driver.find_element_by_css_selector('header > section').source)
+        logger.debug(driver.find_element_by_css_selector('header').source)
         return {'status': constants.NOT_CHECKED}
 
     if 'followers' not in followers_text or 'following' not in following_text:
