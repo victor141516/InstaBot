@@ -1,9 +1,10 @@
 from instaboting import constants
 from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom
 from loguru import logger
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 import time
+import traceback
 
 
 class UnestableScrapperException(Exception):
@@ -49,8 +50,16 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
     driver = get_driver()
     driver.get('https://www.instagram.com/{}'.format(name))
     logger.info('{} has not previously been seen, checking'.format(name))
-    followers_text = driver.find_element_by_css_selector('header > section > ul > li:nth-child(2)').text
-    following_text = driver.find_element_by_css_selector('header > section > ul > li:nth-child(3)').text
+    try:
+        followers_text = driver.find_element_by_css_selector('header > section > ul > li:nth-child(2)').text
+        following_text = driver.find_element_by_css_selector('header > section > ul > li:nth-child(3)').text
+    except NoSuchElementException as e:
+        logger.warning('Cannot find followings or followers')
+        logger.debug('Traceback:')
+        logger.debug(traceback.format_exc())
+        logger.debug('HTML of that section:')
+        logger.debug(driver.find_element_by_css_selector('header > section').source)
+        return {'status': constants.NOT_CHECKED}
 
     if 'followers' not in followers_text or 'following' not in following_text:
         raise UnestableScrapperException('Could not find followes/following correctly')
