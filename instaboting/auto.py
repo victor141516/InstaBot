@@ -117,11 +117,11 @@ def follow_person_by_name(name):
     follow_button = None
     for c in follow_button_candidates:
         try:
-            if len(c.find_elements_by_css_selector('div')) == 0:
+            if c.text in ['Follow', 'Following']:
                 follow_button = c
                 break
         except StaleElementReferenceException as e:
-            logger.debug('Skipping exception:')
+            logger.debug('Skipping exception while searching follow button:')
             logger.debug(e)
             pass
 
