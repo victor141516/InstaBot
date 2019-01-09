@@ -57,7 +57,7 @@ def main():
             logger.info('Current seen ratio: {}'.format(current_seen_ratio))
             if current_seen_ratio > 0.5:
                 next_nof_scrolls += 1
-                logger.info('####### Increasing nomber of scrolls: {} '.format(next_nof_scrolls))
+                logger.info('Increasing nomber of scrolls: {} '.format(next_nof_scrolls))
         except instaboting.auto.UnestableScrapperException as e:
             if e.args[1] == instaboting.constants.ERROR_TIMEOUT_SUGGESTED:
                 continue
