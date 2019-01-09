@@ -1,7 +1,7 @@
 from instaboting import constants
 from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom
 from loguru import logger
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 import time
 import traceback
@@ -115,9 +115,14 @@ def follow_person_by_name(name):
     follow_button_candidates = driver.find_elements_by_css_selector('header span button')
     follow_button = None
     for c in follow_button_candidates:
-        if len(c.find_elements_by_css_selector('div')) == 0:
-            follow_button = c
-            break
+        try:
+            if len(c.find_elements_by_css_selector('div')) == 0:
+                follow_button = c
+                break
+        except StaleElementReferenceException as e:
+            logger.debug('Skipping exception:')
+            logger.debug(e)
+            pass
 
     if follow_button is None:
         logger.warning('Could not find follow button')
