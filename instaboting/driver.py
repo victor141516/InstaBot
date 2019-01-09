@@ -1,3 +1,4 @@
+from loguru import logger
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -55,3 +56,14 @@ def find_elements_by_text(text, from_element=get_driver()):
 
 def scroll_to_bottom():
     return get_driver().execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+
+def save_debug(name, and_print=False):
+    logger.debug('HTML (saving to debug/{}.[html/png]):'.format(name))
+    driver = get_driver()
+    driver.save_screenshot('debug/{}.png'.format(name))
+    html = driver.page_source
+    with open('debug/{}.html'.format(name), 'w') as f:
+        f.write(html)
+    if and_print:
+        logger.debug(html)

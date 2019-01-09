@@ -1,5 +1,6 @@
+from datetime import datetime
 from instaboting import constants
-from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom
+from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom, save_debug
 from loguru import logger
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
@@ -126,6 +127,7 @@ def follow_person_by_name(name):
 
     if follow_button is None:
         logger.warning('Could not find follow button')
+        save_debug(str(int(datetime.now().timestamp())))
         return constants.CANNOT_FOLLOW
 
     if follow_button.text == 'Following':
