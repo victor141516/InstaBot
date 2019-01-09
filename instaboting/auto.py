@@ -113,7 +113,7 @@ def follow_person_by_name(name):
     driver = get_driver()
     logger.info('Following {}'.format(name))
     driver.get('https://www.instagram.com/{}'.format(name))
-    follow_button_candidates = driver.find_elements_by_css_selector('header span button')
+    follow_button_candidates = driver.find_elements_by_css_selector('header button')
     follow_button = None
     for c in follow_button_candidates:
         try:
