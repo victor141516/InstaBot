@@ -29,6 +29,7 @@ def main_loop(nof_scrolls=0):
         if name in PEOPLE:
             already_seen_people += 1
             logger.debug('{} already seen. Increase already_seen_people: {}'.format(name, str(already_seen_people)))
+            suggested_people.remove(name)
         else:
             PEOPLE[name] = {'status': instaboting.constants.NOT_CHECKED}
 
