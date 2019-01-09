@@ -96,16 +96,21 @@ def follow_person_by_name(name):
     logger.info('Following {}'.format(name))
     driver.get('https://www.instagram.com/{}'.format(name))
     follow_button_candidates = driver.find_elements_by_css_selector('header span button')
+    follow_button = None
     for c in follow_button_candidates:
         if len(c.find_elements_by_css_selector('div')) == 0:
             follow_button = c
             break
 
-    if c.text == 'Following':
+    if follow_button is None:
+        logger.warning('Could not find follow button')
+        return constants.CANNOT_FOLLOW
+
+    if follow_button.text == 'Following':
         logger.info('Already followed')
         return constants.ALREADY_FOLLOWING
 
-    c.click()
+    follow_button.click()
     try:
         wait_for_element(
             '//*[contains(text(), \'Following\')]',
