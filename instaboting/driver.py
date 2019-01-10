@@ -55,6 +55,7 @@ def find_elements_by_text(text, from_element=get_driver()):
 
 
 def scroll_to_bottom():
+    logger.debug('Scrolling...')
     return get_driver().execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 
