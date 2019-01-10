@@ -33,7 +33,7 @@ def main_loop(nof_scrolls=0):
         else:
             PEOPLE[name] = {'status': instaboting.constants.NOT_CHECKED}
 
-    for name in PEOPLE:
+    for name in suggested_people:
         this_person = PEOPLE[name]
         this_person.update(instaboting.auto.check_person(name, suggested_people))
         if this_person['status'] == instaboting.constants.SHOULD_FOLLOW:
