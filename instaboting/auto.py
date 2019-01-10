@@ -163,7 +163,7 @@ def follow_person_by_name(name):
             '//*[contains(text(), \'Following\')]',
             selector_type=By.XPATH,
             from_element=driver.find_element_by_css_selector(
-                'header > section > div:nth-child(1) > span'
+                'header > section > div:nth-child(1)'
             )
         )
         logger.info('Followed!')
