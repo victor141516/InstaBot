@@ -35,7 +35,7 @@ def main_loop(nof_scrolls=0):
 
     for name in suggested_people:
         this_person = PEOPLE.get(name, {})
-        this_person.update(instaboting.auto.check_person(name, suggested_people))
+        this_person.update(instaboting.auto.check_person(name, PEOPLE))
         if this_person['status'] == instaboting.constants.SHOULD_FOLLOW:
             this_person['status'] = instaboting.auto.follow_person_by_name(name)
         PEOPLE[name] = this_person
