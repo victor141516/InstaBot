@@ -93,6 +93,26 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
         followers_text = followers_text[:-1]
     following = int(float(following_text) * multiplier)
 
+    follow_button = _get_follow_button()
+    if follow_button:
+        if follow_button.text == 'Follow Back':
+            return {
+                'status': constants.PREVIOUSLY_FOLLOWS_ME,
+                'numbers': {
+                    'followers': followers,
+                    'following': following
+                }
+            }
+
+        if follow_button.text in ['Following', 'Requested']:
+            return {
+                'status': constants.ALREADY_FOLLOWING,
+                'numbers': {
+                    'followers': followers,
+                    'following': following
+                }
+            }
+
     result = min_following < following < max_following \
         and min_followers < followers < max_followers \
         and min_ratio < following/followers < max_ratio
@@ -109,21 +129,24 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
     }
 
 
-def follow_person_by_name(name):
+def _get_follow_button():
     driver = get_driver()
-    logger.info('Following {}'.format(name))
-    driver.get('https://www.instagram.com/{}'.format(name))
     follow_button_candidates = driver.find_elements_by_css_selector('header button')
-    follow_button = None
     for c in follow_button_candidates:
         try:
             if c.text in ['Follow', 'Following']:
-                follow_button = c
-                break
+                return c
         except StaleElementReferenceException as e:
             logger.debug('Skipping exception while searching follow button:')
             logger.debug(e)
             pass
+
+
+def follow_person_by_name(name):
+    driver = get_driver()
+    logger.info('Following {}'.format(name))
+    driver.get('https://www.instagram.com/{}'.format(name))
+    follow_button = _get_follow_button()
 
     if follow_button is None:
         logger.warning('Could not find follow button')
