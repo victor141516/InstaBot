@@ -43,10 +43,10 @@ def get_suggested_people(nof_scrolls=0):
 
 
 def check_person(name, all_people, min_following=100, max_following=10**6, min_followers=100, max_followers=5000, min_ratio=0.5, max_ratio=20, _recursion=0):
-    person = all_people.get(name, {})
-    if person.get('status', constants.NOT_CHECKED) != constants.NOT_CHECKED:
-        logger.debug('{} has previously been seen, with status: {}. Skipping'.format(name, all_people[name]))
-        return person
+    # person = all_people.get(name, {})
+    # if person.get('status', constants.NOT_CHECKED) != constants.NOT_CHECKED:
+    #     logger.debug('{} has previously been seen, with status: {}. Skipping'.format(name, all_people[name]))
+    #     return person
 
     driver = get_driver()
     driver.get('https://www.instagram.com/{}'.format(name))
