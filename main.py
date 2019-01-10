@@ -10,7 +10,9 @@ import traceback
 CONFIG_FILE = 'config.json'
 global PEOPLE
 PEOPLE = get_db()
-logger.level(get_log_level())
+LOGLEVEL = get_log_level()
+logger.level(LOGLEVEL)
+logger.info('Log level set to {}'.format(LOGLEVEL))
 
 
 def exit_handler(sig=None, frame=None):
