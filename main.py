@@ -1,4 +1,4 @@
-from configuration import get_plain_credentials, get_target_nof_following, get_db, get_slowmo, get_show_html_if_error
+from configuration import get_plain_credentials, get_target_nof_following, get_db, get_slowmo, get_show_html_if_error, get_log_level
 import instaboting
 import json
 from loguru import logger
@@ -10,6 +10,7 @@ import traceback
 CONFIG_FILE = 'config.json'
 global PEOPLE
 PEOPLE = get_db()
+logger.level(get_log_level())
 
 
 def exit_handler(sig=None, frame=None):
