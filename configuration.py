@@ -76,7 +76,3 @@ def get_slowmo():
 
 def get_show_html_if_error():
     return os.environ.get('SHOW_HTML_IF_ERROR') in [True, 'true', 'True', '1']
-
-
-def get_log_level():
-    return os.environ.get('LOGLEVEL', 'DEBUG')
