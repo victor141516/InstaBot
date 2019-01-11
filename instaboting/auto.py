@@ -17,8 +17,9 @@ def get_suggested_people(nof_scrolls=0):
     driver = get_driver()
     driver.get('https://www.instagram.com/explore/')
     logger.info('Exploring...')
+    current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
+    logger.debug('Number of people before scrolls: {}'.format(current_nof_people_in_page))
     for x in range(0, nof_scrolls):
-        current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
         scroll_to_bottom()
         while True:
             new_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
