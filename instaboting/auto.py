@@ -15,7 +15,7 @@ class UnestableScrapperException(Exception):
 def get_suggested_people(nof_scrolls=0):
     def _fetch():
         current_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
-        while True:
+        for x in range(0, 50):
             new_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
             if new_nof_people_in_page == current_nof_people_in_page:
                 time.sleep(0.2)
