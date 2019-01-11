@@ -17,6 +17,18 @@ def get_suggested_people(nof_scrolls=0):
     driver = get_driver()
     driver.get('https://www.instagram.com/explore/')
     logger.info('Exploring...')
+
+    for x in range(0, retries):
+        try:
+            wait_for_element('article')  # This page fails sometimes
+            break
+        except TimeoutException as e:
+            if x+1 == retries:
+                raise UnestableScrapperException('Suggested page failed to load', constants.ERROR_TIMEOUT_SUGGESTED)
+            logger.warning('Page failed to load, reloading ({}/{})'.format(x+1, retries))
+            time.sleep(2*x)
+            return get_suggested_people(nof_scrolls)
+
     current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
     logger.debug('Number of people before scrolls: {}'.format(current_nof_people_in_page))
     for x in range(0, nof_scrolls):
@@ -31,17 +43,6 @@ def get_suggested_people(nof_scrolls=0):
                 break
 
         time.sleep(0.5)
-
-    for x in range(0, retries):
-        try:
-            wait_for_element('article')  # This page fails sometimes
-            break
-        except TimeoutException as e:
-            if x+1 == retries:
-                raise UnestableScrapperException('Suggested page failed to load', constants.ERROR_TIMEOUT_SUGGESTED)
-            logger.warning('Page failed to load, reloading ({}/{})'.format(x+1, retries))
-            time.sleep(2*x)
-            pass
 
     elements = driver.find_elements_by_css_selector('article > div > div > div > div')
     names = []
