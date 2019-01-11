@@ -49,7 +49,7 @@ def main():
 
     target_nof_following = get_target_nof_following(CONFIG_FILE)
     current_following_number = instaboting.auto.get_current_following_number()
-    next_nof_scrolls = 0
+    next_nof_scrolls = 1
     while current_following_number < target_nof_following:
         logger.info('Current following number: {}'.format(current_following_number))
         try:
