@@ -18,7 +18,11 @@ def get_suggested_people(nof_scrolls=0):
     driver.get('https://www.instagram.com/explore/')
     logger.info('Exploring...')
     for x in range(0, nof_scrolls):
+        current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
         scroll_to_bottom()
+        while len(driver.find_elements_by_css_selector('article > div > div > div > div')) == current_nof_people_in_page:
+            time.sleep(0.2)
+        time.sleep(0.5)
 
     for x in range(0, retries):
         try:
