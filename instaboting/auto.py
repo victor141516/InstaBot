@@ -13,6 +13,7 @@ class UnestableScrapperException(Exception):
 
 
 def get_suggested_people(nof_scrolls=0):
+    PROFILES_SELECTOR = 'article > div > div > div > div'
     retries = 10
     driver = get_driver()
     driver.get('https://www.instagram.com/explore/')
@@ -29,12 +30,12 @@ def get_suggested_people(nof_scrolls=0):
             time.sleep(2*x)
             return get_suggested_people(nof_scrolls)
 
-    current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
+    current_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
     logger.debug('Number of people before scrolls: {}'.format(current_nof_people_in_page))
     for x in range(0, nof_scrolls):
         scroll_to_bottom()
         while True:
-            new_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
+            new_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
             if new_nof_people_in_page == current_nof_people_in_page:
                 time.sleep(0.2)
             else:
@@ -44,7 +45,7 @@ def get_suggested_people(nof_scrolls=0):
 
         time.sleep(0.5)
 
-    elements = driver.find_elements_by_css_selector('article > div > div > div > div')
+    elements = driver.find_elements_by_css_selector(PROFILES_SELECTOR)
     names = []
     for el in elements:
         retries = 0
