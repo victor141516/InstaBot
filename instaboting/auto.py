@@ -38,7 +38,11 @@ def get_suggested_people(nof_scrolls=0):
     elements = driver.find_elements_by_css_selector('article > div > div > div > div')
     names = []
     for e in elements:
-        e.click()
+        try:
+            e.click()
+        except StaleElementReferenceException as e:
+            logger.warning('Could not click profile')
+            continue
         name = wait_for_element('article > header a[title]').get_attribute('title')
         logger.info('Found {}'.format(name))
         names.append(name)
