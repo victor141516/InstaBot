@@ -13,6 +13,36 @@ class UnestableScrapperException(Exception):
 
 
 def get_suggested_people(nof_scrolls=0):
+    def _fetch():
+        current_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
+        while True:
+            new_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
+            if new_nof_people_in_page == current_nof_people_in_page:
+                time.sleep(0.2)
+            else:
+                current_nof_people_in_page = new_nof_people_in_page
+                break
+
+        time.sleep(0.5)
+
+        elements = driver.find_elements_by_css_selector(PROFILES_SELECTOR)
+        for el in elements:
+            try:
+                el.click()
+            except StaleElementReferenceException:
+                logger.warning('Could not click profile')
+                break
+
+            try:
+                name = wait_for_element('article > header a[title]').get_attribute('title')
+            except TimeoutException as e:
+                logger.warning('Error getting name after profile click')
+                continue
+
+            logger.info('Found {}'.format(name))
+            names.append(name)
+            driver.find_element_by_css_selector('body > div > div[role=dialog] > button').click()
+
     PROFILES_SELECTOR = 'article > div > div > div > div'
     retries = 10
     driver = get_driver()
@@ -30,45 +60,11 @@ def get_suggested_people(nof_scrolls=0):
             time.sleep(2*x)
             return get_suggested_people(nof_scrolls)
 
-    current_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
-    logger.debug('Number of people before scrolls: {}'.format(current_nof_people_in_page))
+    names = []
+    _fetch()
     for x in range(0, nof_scrolls):
         scroll_to_bottom()
-        while True:
-            new_nof_people_in_page = len(driver.find_elements_by_css_selector(PROFILES_SELECTOR))
-            if new_nof_people_in_page == current_nof_people_in_page:
-                time.sleep(0.2)
-            else:
-                current_nof_people_in_page = new_nof_people_in_page
-                logger.debug('Number of people after scroll: {}'.format(current_nof_people_in_page))
-                break
-
-        time.sleep(0.5)
-
-    elements = driver.find_elements_by_css_selector(PROFILES_SELECTOR)
-    names = []
-    for el in elements:
-        retries = 0
-        while True:
-            try:
-                el.location_once_scrolled_into_view
-                el.click()
-            except StaleElementReferenceException:
-                logger.warning('Could not click profile')
-                break
-
-            try:
-                name = wait_for_element('article > header a[title]').get_attribute('title')
-            except TimeoutException as e:
-                if retries == 4:
-                    raise e
-                retries += 1
-                continue
-
-            logger.info('Found {}'.format(name))
-            names.append(name)
-            driver.find_element_by_css_selector('body > div > div[role=dialog] > button').click()
-            break
+        _fetch()
 
     return list(set(names))
 
