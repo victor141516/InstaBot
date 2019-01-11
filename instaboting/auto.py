@@ -24,8 +24,9 @@ def get_suggested_people(nof_scrolls=0):
             new_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
             if new_nof_people_in_page == current_nof_people_in_page:
                 time.sleep(0.2)
-                current_nof_people_in_page = new_nof_people_in_page
             else:
+                current_nof_people_in_page = new_nof_people_in_page
+                logger.debug('Number of people after scroll: {}'.format(current_nof_people_in_page))
                 break
 
         time.sleep(0.5)
