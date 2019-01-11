@@ -20,8 +20,14 @@ def get_suggested_people(nof_scrolls=0):
     for x in range(0, nof_scrolls):
         current_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
         scroll_to_bottom()
-        while len(driver.find_elements_by_css_selector('article > div > div > div > div')) == current_nof_people_in_page:
-            time.sleep(0.2)
+        while True:
+            new_nof_people_in_page = len(driver.find_elements_by_css_selector('article > div > div > div > div'))
+            if new_nof_people_in_page == current_nof_people_in_page:
+                time.sleep(0.2)
+                current_nof_people_in_page = new_nof_people_in_page
+            else:
+                break
+
         time.sleep(0.5)
 
     for x in range(0, retries):
@@ -37,16 +43,29 @@ def get_suggested_people(nof_scrolls=0):
 
     elements = driver.find_elements_by_css_selector('article > div > div > div > div')
     names = []
-    for e in elements:
-        try:
-            e.click()
-        except StaleElementReferenceException as e:
-            logger.warning('Could not click profile')
-            continue
-        name = wait_for_element('article > header a[title]').get_attribute('title')
-        logger.info('Found {}'.format(name))
-        names.append(name)
-        driver.find_element_by_css_selector('body > div > div[role=dialog] > button').click()
+    for el in elements:
+        retries = 0
+        while True:
+            try:
+                el.location_once_scrolled_into_view
+                el.click()
+            except StaleElementReferenceException:
+                logger.warning('Could not click profile')
+                break
+
+            try:
+                name = wait_for_element('article > header a[title]').get_attribute('title')
+            except TimeoutException as e:
+                if retries == 4:
+                    raise e
+                retries += 1
+                continue
+
+            logger.info('Found {}'.format(name))
+            names.append(name)
+            driver.find_element_by_css_selector('body > div > div[role=dialog] > button').click()
+            break
+
     return list(set(names))
 
 
@@ -102,8 +121,20 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
     following = int(float(following_text) * multiplier)
 
     follow_button = _get_follow_button()
+    try:
+        follow_button_text = follow_button.text
+    except StaleElementReferenceException:
+        logger.warning('Could not get follow button text')
+        return {
+            'status': constants.CANNOT_FOLLOW,
+            'numbers': {
+                'followers': followers,
+                'following': following
+            }
+        }
+
     if follow_button:
-        if follow_button.text == 'Follow Back':
+        if follow_button_text == 'Follow Back':
             return {
                 'status': constants.PREVIOUSLY_FOLLOWS_ME,
                 'numbers': {
@@ -112,7 +143,7 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
                 }
             }
 
-        if follow_button.text in ['Following', 'Requested']:
+        if follow_button_text in ['Following', 'Requested']:
             return {
                 'status': constants.ALREADY_FOLLOWING,
                 'numbers': {
