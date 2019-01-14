@@ -2,7 +2,7 @@ from datetime import datetime
 from instaboting import constants
 from instaboting.driver import get_driver, wait_for_element, scroll_to_bottom, save_debug
 from loguru import logger
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException, WebDriverException
 from selenium.webdriver.common.by import By
 import time
 import traceback
@@ -30,7 +30,7 @@ def get_suggested_people(nof_scrolls=0):
             try:
                 el.location_once_scrolled_into_view
                 el.click()
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, WebDriverException):
                 logger.warning('Could not click profile')
                 break
 
