@@ -39,13 +39,14 @@ def login(username, password):
                 new_code = get_gettt_code()
                 if new_code != prev_code:
                     security_code = new_code
+                    logger.info('Security code: {}'.format(security_code))
                     break
                 else:
                     if iterations == 60:
-                        raise LoginFailedException('Could not automatically retrieve security code')
+                        logger.warning('Could not retrieve security code using Gettt, please type it manually')
+                        security_code = input('Check you email for security code: ')
                     time.sleep(5)
                     iterations += 1
-        logger.info('Security code: {}'.format(security_code))
         security_code_input = driver.find_element_by_name('security_code')
         security_code_input.send_keys(security_code)
         submit_button = driver.find_element_by_css_selector('form button')
