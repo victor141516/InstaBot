@@ -40,7 +40,11 @@ def main_loop(nof_scrolls=0):
             this_person['status'] = instaboting.auto.follow_person_by_name(name)
         PEOPLE[name] = this_person
 
-    return already_seen_people / len(suggested_people)
+    if len(suggested_people) == 0:
+        instaboting.driver.save_debug(message='Could not retrieve any person while exploring')
+        return already_seen_people/0.0001
+    else:
+        return already_seen_people / len(suggested_people)
 
 
 def main():

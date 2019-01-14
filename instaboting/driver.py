@@ -1,3 +1,4 @@
+from datetime import datetime
 from loguru import logger
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -60,7 +61,9 @@ def scroll_to_bottom():
     return get_driver().execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 
-def save_debug(name, and_print=False, message=None):
+def save_debug(name=None, and_print=False, message=None):
+    if name is None:
+        name = str(int(datetime.now().timestamp()))
     logger.debug('HTML (saving to debug/{}.[html/png/txt]):'.format(name))
     driver = get_driver()
     driver.save_screenshot('debug/{}.png'.format(name))
@@ -69,6 +72,7 @@ def save_debug(name, and_print=False, message=None):
         logger.debug(message)
     with open('debug/{}.txt'.format(name), 'w') as f:
         if message is not None:
+            logger.warning(message)
             f.write(message + '\n\n')
         f.write(traceback.format_exc())
     with open('debug/{}.html'.format(name), 'w') as f:

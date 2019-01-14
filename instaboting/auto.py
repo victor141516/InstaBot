@@ -97,7 +97,7 @@ def check_person(name, all_people, min_following=100, max_following=10**6, min_f
         logger.debug('HTML of that section:')
         maybe_header = driver.find_elements_by_css_selector('header')
         if (len(maybe_header) == 0):
-            save_debug(str(int(datetime.now().timestamp())), 'Header not found, saving screenshot')
+            save_debug(message='Header not found, saving screenshot')
         else:
             logger.debug(maybe_header[0]('header').source)
         return {'status': constants.NOT_CHECKED}
@@ -193,8 +193,7 @@ def follow_person_by_name(name):
     follow_button = _get_follow_button()
 
     if follow_button is None:
-        logger.warning('Could not find follow button')
-        save_debug(str(int(datetime.now().timestamp())))
+        save_debug(message='Could not find follow button')
         return constants.CANNOT_FOLLOW
 
     if follow_button.text == 'Following':
