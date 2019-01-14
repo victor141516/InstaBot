@@ -27,6 +27,7 @@ def get_suggested_people(nof_scrolls=0):
 
         elements = driver.find_elements_by_css_selector(PROFILES_SELECTOR)
         for el in elements:
+            el.location_once_scrolled_into_view
             try:
                 el.click()
             except StaleElementReferenceException:
