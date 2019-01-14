@@ -75,7 +75,7 @@ def get_gettt_code():
     if len(result) == 0:
         return default_code
 
-    result = result['text/html']
+    result = result[0]['text/html']
     code = result.split('<font size="6">')[-1].split('</font>')[0]
     if len(code) != 6:
         return default_code
