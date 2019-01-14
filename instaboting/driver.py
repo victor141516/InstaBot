@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import os
+import traceback
 
 
 class InstaDriver:
@@ -59,11 +60,17 @@ def scroll_to_bottom():
     return get_driver().execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 
-def save_debug(name, and_print=False):
-    logger.debug('HTML (saving to debug/{}.[html/png]):'.format(name))
+def save_debug(name, and_print=False, message=None):
+    logger.debug('HTML (saving to debug/{}.[html/png/txt]):'.format(name))
     driver = get_driver()
     driver.save_screenshot('debug/{}.png'.format(name))
     html = driver.page_source
+    if message is not None:
+        logger.debug(message)
+    with open('debug/{}.txt'.format(name), 'w') as f:
+        if message is not None:
+            f.write(message + '\n\n')
+        f.write(traceback.format_exc())
     with open('debug/{}.html'.format(name), 'w') as f:
         f.write(html)
     if and_print:
