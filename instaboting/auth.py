@@ -41,7 +41,7 @@ def login(username, password):
                     security_code = new_code
                     break
                 else:
-                    if iterations == 15:
+                    if iterations == 60:
                         raise LoginFailedException('Could not automatically retrieve security code')
                     time.sleep(5)
                     iterations += 1
