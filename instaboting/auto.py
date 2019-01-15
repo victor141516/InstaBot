@@ -221,3 +221,42 @@ def get_current_following_number():
     profile_link = wait_for_element('span[aria-label=Profile]').find_element_by_xpath('..').get_attribute('href')
     driver.get(profile_link)
     return int(wait_for_element('header > section > ul > li:nth-child(3) > a > span').text)
+
+
+def unfollow_everyone():
+    driver = get_driver()
+    driver.get('https://www.instagram.com/cacapedo__/')
+    wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a').click()
+    wait_for_element('div[role="dialog"] ul li button')
+    first_person = driver.find_elements_by_css_selector('div[role="dialog"] ul li button')[0]
+    first_person.location_once_scrolled_into_view
+    following_classes = first_person.get_attribute('class').split(' ')
+    first_person.click()
+    wait_for_element('div[role=presentation] > div[role=dialog] > div > div > button:nth-child(1)').click()
+    first_person = driver.find_elements_by_css_selector('div[role="dialog"] ul li button')[0]
+    while True:
+        not_following_classes = first_person.get_attribute('class').split(' ')
+        following_class = list(set(following_classes).difference(set(not_following_classes)))
+        if len(following_class) == 0:
+            time.sleep(0.5)
+            continue
+        following_class = following_class[0]
+        break
+
+    following_people = driver.find_elements_by_css_selector('div[role="dialog"] ul li button.{}'.format(following_class))
+    for person in following_people:
+        try:
+            person.location_once_scrolled_into_view
+            person.click()
+            wait_for_element('div[role=presentation] > div[role=dialog] > div > div > button:nth-child(1)').click()
+        except (StaleElementReferenceException, TimeoutException):
+            break
+        while True:
+            if len(person.find_elements_by_css_selector('svg')) > 0:
+                time.sleep(0.5)
+            else:
+                break
+
+    driver.get('https://www.instagram.com/cacapedo__/')
+    if int(wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a > span').text) > 0:
+        unfollow_everyone()

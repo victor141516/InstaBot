@@ -69,11 +69,14 @@ def main():
                 raise e
         current_following_number = instaboting.auto.get_current_following_number()
         time.sleep(get_slowmo())
+
     logger.info('Target following number ({}) reached: {}'.format(target_nof_following, current_following_number))
+    instaboting.auto.unfollow_everyone()
 
 
 try:
-    main()
+    while True:
+        main()
 except Exception as e:
     logger.critical('{} occurred, printing traceback and exiting'.format(str(type(e))))
     logger.critical(traceback.format_exc())
