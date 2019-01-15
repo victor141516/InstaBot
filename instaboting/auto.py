@@ -255,8 +255,11 @@ def unfollow_everyone():
             if len(person.find_elements_by_css_selector('svg')) > 0:
                 time.sleep(0.5)
             else:
+                logger.info('Person unfollowed')
                 break
 
     driver.get('https://www.instagram.com/cacapedo__/')
-    if int(wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a > span').text) > 0:
+    current_following_number = int(wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a > span').text)
+    if current_following_number > 0:
+        logger.info('Current following number: {}'.format(current_following_number))
         unfollow_everyone()
