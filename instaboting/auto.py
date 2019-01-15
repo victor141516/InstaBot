@@ -223,9 +223,10 @@ def get_current_following_number():
     return int(wait_for_element('header > section > ul > li:nth-child(3) > a > span').text)
 
 
-def unfollow_everyone():
+def unfollow_everyone(last_following_number=None, nof_times_same_following=0, profile_link=None):
     driver = get_driver()
-    driver.get('https://www.instagram.com/cacapedo__/')
+    profile_link = wait_for_element('span[aria-label=Profile]').find_element_by_xpath('..').get_attribute('href')
+    driver.get(profile_link)
     wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a').click()
     wait_for_element('div[role="dialog"] ul li button')
     first_person = driver.find_elements_by_css_selector('div[role="dialog"] ul li button')[0]
@@ -260,8 +261,16 @@ def unfollow_everyone():
                 logger.info('Person unfollowed')
                 break
 
-    driver.get('https://www.instagram.com/cacapedo__/')
+    driver.get(profile_link)
     current_following_number = int(wait_for_element('section > main > div > header > section > ul > li:nth-child(3) > a > span').text)
     if current_following_number > 0:
         logger.info('Current following number: {}'.format(current_following_number))
-        unfollow_everyone()
+        if current_following_number == last_following_number:
+            logger.info('Throttling...')
+            time.sleep(10 * nof_times_same_following)
+            nof_times_same_following += 1
+        unfollow_everyone(
+            last_following_number=current_following_number,
+            nof_times_same_following=nof_times_same_following,
+            profile_link=profile_link
+        )
