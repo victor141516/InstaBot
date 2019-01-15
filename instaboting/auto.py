@@ -248,7 +248,9 @@ def unfollow_everyone():
         try:
             person.location_once_scrolled_into_view
             person.click()
+            time.sleep(5)
             wait_for_element('div[role=presentation] > div[role=dialog] > div > div > button:nth-child(1)').click()
+            time.sleep(5)
         except (StaleElementReferenceException, TimeoutException):
             break
         while True:
